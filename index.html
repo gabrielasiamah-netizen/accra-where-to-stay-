@@ -2,148 +2,167 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Accra — Where to Stay · Zones Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Where to Stay in Accra — A Zones Guide</title>
+<meta name="description" content="Greater Accra split into five stay-zones — premium, mid-range, budget, business and coastal — on a real interactive map. Pick a base that matches your trip." />
+<meta property="og:title" content="Where to Stay in Accra — A Zones Guide" />
+<meta property="og:description" content="Five stay-zones across Greater Accra on a real interactive map." />
+<meta property="og:type" content="website" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#16221d;          /* deep charcoal-green */
-    --ink-soft:#2c3a33;
-    --paper:#fbf7ef;        /* warm ivory */
-    --paper-2:#f2ebdd;
-    --line:#e2d8c4;
-    --gold:#d9a021;         /* single bold accent */
-    --muted:#6d7069;
-    --green:#7cbf5e;        /* premium */
-    --amber:#f2c85b;        /* mid-range */
-    --orange:#f0994f;       /* budget */
-    --pink:#e57ba0;         /* business/industrial */
-    --blue:#5b9bd6;         /* coastal */
-    --shadow:0 10px 30px rgba(20,32,28,.18);
+    --ink:#16221d; --ink-soft:#2c3a33; --paper:#fbf7ef; --paper-2:#f2ebdd;
+    --line:#e2d8c4; --gold:#d9a021; --muted:#6d7069;
+    --green:#7cbf5e; --amber:#f2c85b; --orange:#f0994f; --pink:#e57ba0; --blue:#5b9bd6;
+    --shadow:0 14px 40px rgba(20,32,28,.16);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:"Inter",system-ui,sans-serif;color:var(--ink);background:var(--paper)}
-  #map{position:absolute;inset:0;z-index:0;background:#aadaff}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Inter",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 
-  /* ---- Header ---- */
-  .topbar{
-    position:absolute;top:0;left:0;right:0;z-index:1200;
-    display:flex;align-items:center;gap:12px;
-    padding:10px 14px;
-    background:linear-gradient(180deg, rgba(22,34,29,.96), rgba(22,34,29,.86));
-    color:var(--paper);border-bottom:1px solid rgba(217,160,33,.55);
-    backdrop-filter:saturate(1.2) blur(4px);
-  }
-  .topbar .mark{width:30px;height:30px;flex:0 0 auto;border-radius:7px;
-    background:radial-gradient(circle at 30% 30%, var(--gold), #a9781a);
-    display:grid;place-items:center;font-weight:700;color:#1c150a;font-family:"Fraunces",serif}
-  .topbar h1{margin:0;font-family:"Fraunces",serif;font-weight:600;font-size:16px;letter-spacing:.2px;line-height:1.05}
-  .topbar h1 small{display:block;font-family:"Inter";font-weight:600;font-size:9.5px;letter-spacing:.28em;
-    text-transform:uppercase;color:var(--gold);margin-top:2px}
-  .topbar .spacer{flex:1}
-  .ghbtn{appearance:none;border:1px solid rgba(217,160,33,.5);background:rgba(255,255,255,.06);
-    color:var(--paper);font:600 12px/1 "Inter";padding:9px 12px;border-radius:9px;cursor:pointer}
-  .ghbtn:hover{background:rgba(217,160,33,.18)}
+  header.site{position:sticky;top:0;z-index:50;background:rgba(22,34,29,.96);
+    border-bottom:1px solid rgba(217,160,33,.5);backdrop-filter:blur(6px)}
+  header.site .wrap{display:flex;align-items:center;gap:12px;height:56px}
+  .mark{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;font:700 15px/1 "Fraunces",serif;
+    color:#1c150a;background:radial-gradient(circle at 30% 28%, var(--gold), #a9781a)}
+  header.site b{color:var(--paper);font-family:"Fraunces",serif;font-weight:600;font-size:15px}
+  header.site .sp{flex:1}
+  header.site a.jump{color:var(--paper);text-decoration:none;font-weight:600;font-size:13px;
+    border:1px solid rgba(217,160,33,.55);padding:8px 13px;border-radius:9px}
+  header.site a.jump:hover{background:rgba(217,160,33,.18)}
 
-  /* ---- Legend panel ---- */
-  .panel{
-    position:absolute;z-index:1100;left:14px;top:64px;width:322px;max-width:calc(100vw - 28px);
-    background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
-    overflow:hidden
-  }
-  .panel .head{display:flex;align-items:center;gap:8px;padding:12px 14px 10px;border-bottom:1px solid var(--line);background:var(--paper-2)}
-  .panel .head h2{margin:0;font-family:"Fraunces",serif;font-weight:600;font-size:14px}
-  .panel .head .pin{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(217,160,33,.22)}
-  .panel .body{padding:6px 8px;max-height:min(58vh,520px);overflow:auto}
-  .zone{display:flex;gap:10px;padding:9px 8px;border-radius:10px;cursor:pointer;align-items:flex-start;transition:background .12s}
-  .zone:hover{background:var(--paper-2)}
-  .zone.off{opacity:.4}
-  .sw{flex:0 0 auto;width:16px;height:16px;border-radius:5px;margin-top:2px;border:1px solid rgba(0,0,0,.18)}
-  .zone h3{margin:0 0 2px;font-size:12.5px;font-weight:700;letter-spacing:.2px}
-  .zone p{margin:0;font-size:11px;line-height:1.35;color:var(--muted)}
-  .zone .who{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:var(--ink-soft);
-    background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:2px 7px}
-  .foot{padding:10px 14px;border-top:1px solid var(--line);background:var(--paper-2);font-size:10.5px;color:var(--muted)}
-  .foot b{color:var(--ink-soft)}
-  .toggle{display:none}
+  .hero{background:
+      radial-gradient(1200px 400px at 80% -10%, rgba(217,160,33,.16), transparent 60%),
+      linear-gradient(180deg, #17251f 0%, #1d2f27 100%);
+    color:var(--paper);padding:52px 0 44px}
+  .eyebrow{font:600 11px/1 "Inter";letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+  .hero h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(32px,6vw,54px);line-height:1.02;margin:0 0 16px;letter-spacing:-.5px}
+  .hero h1 em{font-style:italic;color:var(--gold)}
+  .hero p.lede{max-width:60ch;font-size:clamp(15px,2.3vw,18px);color:#e7e0d1;margin:0 0 26px}
+  .keys{display:flex;flex-wrap:wrap;gap:8px}
+  .keys button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
+    color:var(--paper);font:600 12px/1 "Inter";padding:8px 12px;border-radius:20px;display:flex;align-items:center;gap:7px;transition:.14s}
+  .keys button:hover{background:rgba(255,255,255,.12)}
+  .keys .d{width:11px;height:11px;border-radius:50%}
 
-  /* ---- Tips card ---- */
-  .tips{
-    position:absolute;z-index:1100;right:14px;bottom:22px;width:250px;max-width:calc(100vw - 28px);
-    background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px
-  }
-  .tips h2{margin:0 0 8px;font-family:"Fraunces",serif;font-weight:600;font-size:13px;display:flex;align-items:center;gap:7px}
-  .tips h2::before{content:"";width:14px;height:2px;background:var(--gold);display:inline-block;border-radius:2px}
-  .tips li{font-size:11px;line-height:1.45;margin:0 0 5px;list-style:none;padding-left:14px;position:relative;color:var(--ink-soft)}
-  .tips li::before{content:"";position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%}
-  .tips ul{margin:0;padding:0}
-  .tips li.g::before{background:var(--green)} .tips li.b::before{background:var(--blue)}
-  .tips li.p::before{background:var(--pink)} .tips li.o::before{background:var(--orange)}
-
-  /* Leaflet label chips */
-  .lbl{background:rgba(251,247,239,.92);border:1px solid var(--line);border-radius:20px;
-    padding:1px 7px;font:600 10.5px/1.4 "Inter";color:var(--ink);white-space:nowrap;
-    box-shadow:0 1px 4px rgba(20,32,28,.14)}
-  .lbl.big{font-size:12px;font-weight:700;padding:2px 9px}
-  .leaflet-tooltip-pane .lbl{margin-top:2px}
+  .mapsec{padding:34px 0 10px}
+  .mapsec h2,.zonesec h2,.tipsec h2{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(21px,3.4vw,28px);margin:0 0 6px;letter-spacing:-.3px}
+  .mapsec .sub,.zonesec .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .mapwrap{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  #map{height:min(72vh,600px);width:100%;background:#aadaff}
+  .maplegend{position:absolute;z-index:500;top:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .maplegend .chip{cursor:pointer;border:1px solid var(--line);background:rgba(251,247,239,.94);border-radius:20px;
+    padding:5px 10px;font:600 11px/1 "Inter";color:var(--ink);display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(20,32,28,.12)}
+  .maplegend .chip .d{width:10px;height:10px;border-radius:50%}
+  .maplegend .chip.off{opacity:.42}
+  .maplegend .chip.reset{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .lbl{background:rgba(251,247,239,.92);border:1px solid var(--line);border-radius:20px;padding:1px 7px;
+    font:600 10.5px/1.4 "Inter";color:var(--ink);white-space:nowrap;box-shadow:0 1px 4px rgba(20,32,28,.14)}
+  .lbl.big{font-size:12px;font-weight:700}
   .pop b{font-family:"Fraunces",serif}
   .pop .tag{display:inline-block;font-size:10px;font-weight:700;color:#fff;border-radius:20px;padding:2px 8px;margin-top:4px}
+  .maphint{font-size:12px;color:var(--muted);padding:10px 4px 0}
 
-  /* ---- mobile ---- */
-  @media (max-width:720px){
-    .panel{left:8px;right:8px;top:60px;width:auto;max-width:none}
-    .panel.collapsed .body,.panel.collapsed .foot{display:none}
-    .panel .head{cursor:pointer}
-    .toggle{display:block;margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
-    .tips{display:none}
-    .topbar h1{font-size:14px}
-  }
+  .zonesec{padding:30px 0 6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .card{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;cursor:pointer;
+    transition:transform .12s, box-shadow .12s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .card .bar{height:6px}
+  .card .in{padding:15px 16px 16px}
+  .card h3{margin:0 0 4px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .card h3 .n{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#fff;font:700 12px/1 "Fraunces",serif}
+  .card p{margin:0 0 10px;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+  .card .who{font-size:10.5px;font-weight:600;color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:3px 9px;display:inline-block;margin-bottom:10px}
+  .card .hoods{font-size:11.5px;color:var(--muted);line-height:1.5;border-top:1px dashed var(--line);padding-top:9px}
+  .card .hoods b{color:var(--ink-soft);font-weight:600}
+
+  .tipsec{padding:30px 0 10px}
+  .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .tip{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px 15px}
+  .tip .h{font-weight:700;font-size:13px;margin:0 0 4px;display:flex;align-items:center;gap:7px}
+  .tip .h .d{width:9px;height:9px;border-radius:50%}
+  .tip p{margin:0;font-size:12.5px;color:var(--ink-soft)}
+
+  footer.site{margin-top:34px;background:#17251f;color:#cfd6cf;padding:26px 0 40px}
+  footer.site .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start}
+  footer.site h4{font-family:"Fraunces",serif;color:var(--paper);font-weight:600;margin:0 0 6px;font-size:15px}
+  footer.site p{margin:0;font-size:12px;max-width:52ch;color:#a9b4ac}
+  footer.site .note{font-size:11.5px;color:#8c968e;max-width:46ch}
+  footer.site b{color:#e7e0d1}
 </style>
 </head>
 <body>
-<div id="map"></div>
-
-<div class="topbar">
-  <div class="mark">A</div>
-  <h1>Where to Stay in Accra<small>Greater Accra · Zones Guide</small></h1>
-  <div class="spacer"></div>
-  <button class="ghbtn" id="fit">Reset view</button>
-</div>
-
-<div class="panel" id="panel">
-  <div class="head" id="phead">
-    <span class="pin"></span>
-    <h2>Pick your zone</h2>
-    <span class="toggle" id="ptoggle">Hide</span>
+<header class="site">
+  <div class="wrap">
+    <span class="mark">A</span><b>Where to Stay in Accra</b>
+    <span class="sp"></span>
+    <a class="jump" href="#map">Open the map</a>
   </div>
-  <div class="body" id="legend"></div>
-  <div class="foot">
-    Tap a zone to isolate it. Colours are a planning guide, not hard borders — Accra's neighbourhoods blend into each other.
-    <br><br><b>Source note:</b> Zones reflect 2026 local guides. Corrected from the reference art, where the "premium" area was drawn over Achimota/Dome — the city's actual upscale cluster is <b>Cantonments, Airport Residential, East Legon, Labone & Ridge</b>.
-  </div>
-</div>
+</header>
 
-<div class="tips">
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Greater Accra · Ghana · Zones Guide</p>
+    <h1>Find the right <em>base</em><br>before you book.</h1>
+    <p class="lede">Ghana's capital runs from Atlantic beaches and old fishing quarters to leafy diplomatic
+      neighbourhoods and a busy port. This guide splits Greater Accra into five stay-zones, so you can match
+      a neighbourhood to your trip in a glance — then explore each on the live map below.</p>
+    <div class="keys" id="heroKeys"></div>
+  </div>
+</section>
+
+<section class="mapsec wrap">
+  <a id="map" style="position:relative;top:-56px"></a>
+  <h2>The map</h2>
+  <p class="sub">Tap a colour to isolate a zone. Tap any dot for what the area is like. Borders are soft — Accra's neighbourhoods blend.</p>
+  <div class="mapwrap">
+    <div id="mapcanvas" style="height:min(72vh,600px);width:100%;background:#aadaff"></div>
+    <div class="maplegend" id="mapLegend"></div>
+  </div>
+  <p class="maphint">Basemap © OpenStreetMap contributors © CARTO · zones are a planning guide, not official boundaries.</p>
+</section>
+
+<section class="zonesec wrap">
+  <h2>The five zones</h2>
+  <p class="sub">Tap a card to spotlight that zone on the map.</p>
+  <div class="grid" id="cards"></div>
+</section>
+
+<section class="tipsec wrap">
   <h2>Quick tips</h2>
-  <ul>
-    <li class="g"><b>First-timers:</b> stay Premium (green) or Coastal (blue).</li>
-    <li class="p"><b>Business:</b> Airport City, Cantonments or Tema.</li>
-    <li class="o"><b>On a budget:</b> Adabraka, Osu-adjacent, Kaneshie.</li>
-    <li class="b"><b>Beach lovers:</b> La (Labadi), Nungua, Kokrobite.</li>
-  </ul>
-</div>
+  <div class="tips" id="tips"></div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <h4>About this guide</h4>
+      <p>A simple planning map for first-time visitors, diaspora travellers and business trips. Pick a zone,
+      then check listings on your preferred booking site.</p>
+    </div>
+    <div>
+      <h4>Source note</h4>
+      <p class="note">Zones reflect 2026 local guides. The upscale cluster is <b>Cantonments, Airport Residential,
+      East Legon, Labone &amp; Ridge</b> — corrected from earlier art that placed "premium" over Achimota/Dome.
+      Not affiliated with any listing platform.</p>
+    </div>
+  </div>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const ZONES = {
   premium:{name:"Premium / Upscale", color:"#4fa23a", fill:"#7cbf5e",
-    desc:"Luxury stays, business & first-time visitors. Safe, central, near the airport, embassies & the best dining.",
+    desc:"Luxury stays, business trips and first-time visitors. Safe, central, near the airport, embassies and the best dining.",
     who:"Luxury · first visit"},
   mid:{name:"Mid-Range / Comfort", color:"#d9a422", fill:"#f2c85b",
-    desc:"Best balance of comfort and price. Established residential suburbs with good access to malls and eateries.",
+    desc:"The best balance of comfort and price. Established residential suburbs with good access to malls and eateries.",
     who:"Value + comfort"},
   budget:{name:"Budget / Value", color:"#d97a2c", fill:"#f0994f",
     desc:"Affordable, lively and local. Central short-stays near transport hubs — great if you're happy in busy neighbourhoods.",
@@ -155,10 +174,9 @@ const ZONES = {
     desc:"Beaches, resorts, nightlife and waterfront views. The relaxed, going-out side of the city.",
     who:"Beach & nightlife"},
 };
+const ORDER=["premium","mid","budget","business","coastal"];
 
-// lat, lng, zone, note, big?(anchor label)
 const PLACES = [
-  // Premium / upscale cluster (central-east)
   ["Cantonments",5.5650,-0.1700,"premium","Embassies & diplomats — most secure area",1],
   ["Airport Residential",5.6030,-0.1810,"premium","Luxury hotels, minutes from Kotoka",1],
   ["East Legon",5.6360,-0.1560,"premium","Trendy: malls, cafés, top restaurants",1],
@@ -167,7 +185,6 @@ const PLACES = [
   ["Roman Ridge",5.5900,-0.1950,"premium","Quiet upmarket residential"],
   ["Dzorwulu",5.6050,-0.1970,"premium","Leafy, upscale, central"],
 
-  // Mid-range / comfort
   ["Achimota",5.6150,-0.2250,"mid","Residential, forest, good road access",1],
   ["Tesano",5.5920,-0.2200,"mid","Comfortable middle-class streets"],
   ["Abelemkpe",5.6000,-0.2050,"mid","Central, calm, well-connected"],
@@ -176,21 +193,18 @@ const PLACES = [
   ["Dansoman",5.5450,-0.2550,"mid","Large residential estate, west"],
   ["Spintex (estates)",5.6300,-0.1050,"mid","Mid-market gated estates"],
 
-  // Budget / value
   ["Adabraka",5.5600,-0.2100,"budget","Cheap central short-stays",1],
   ["Asylum Down",5.5650,-0.2050,"budget","Budget guesthouses near Circle"],
   ["Kwame Nkrumah Circle",5.5700,-0.2070,"budget","Major transport hub"],
   ["Kaneshie",5.5600,-0.2350,"budget","Market energy, local vibe"],
   ["Odorkor",5.5670,-0.2550,"budget","Affordable, authentic"],
 
-  // Business / industrial
   ["Airport City",5.6050,-0.1720,"business","Business district — HQs & hotels",1],
   ["North Industrial Area",5.5730,-0.2200,"business","Factories & warehousing"],
   ["Spintex (industrial)",5.6350,-0.0850,"business","Light industry & logistics"],
   ["Tema",5.6670,-0.0170,"business","Port city & heavy industry",1],
   ["Tema Harbour",5.6300,0.0000,"business","Ghana's main port"],
 
-  // Coastal / leisure
   ["Jamestown",5.5320,-0.2130,"coastal","Historic Ga fishing quarter"],
   ["Osu",5.5560,-0.1820,"coastal","Nightlife & dining (Oxford St)",1],
   ["La / Labadi",5.5600,-0.1550,"coastal","Labadi Beach & beach resorts",1],
@@ -201,86 +215,82 @@ const PLACES = [
   ["Kokrobite",5.4800,-0.3800,"coastal","Beach resorts, weekend escape",1],
 ];
 
-const map = L.map('map',{zoomControl:true, attributionControl:true}).setView([5.60,-0.14],11);
-L.control.zoom({position:'topright'}); // keep default
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-  maxZoom:19, subdomains:'abcd',
-  attribution:'© OpenStreetMap © CARTO'
-}).addTo(map);
+const TIPS=[
+  ["premium","First-time visitors","Stay Premium (green) or Coastal (blue) — safe, central, easy to get around."],
+  ["business","Business travellers","Base near Airport City, Cantonments or Tema for offices and the port."],
+  ["budget","On a budget","Adabraka, Asylum Down and Kaneshie give central, affordable short-stays."],
+  ["coastal","Beach lovers","Head to La (Labadi), Nungua or Kokrobite for sand and nightlife."],
+];
 
-const layers = {}; // zone -> LayerGroup
-Object.keys(ZONES).forEach(z=> layers[z]=L.layerGroup().addTo(map));
+const map=L.map('mapcanvas',{zoomControl:true,attributionControl:false}).setView([5.60,-0.14],11);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  {maxZoom:19,subdomains:'abcd'}).addTo(map);
 
+const layers={}; ORDER.forEach(z=>layers[z]=L.layerGroup().addTo(map));
 const allLatLng=[];
-PLACES.forEach(p=>{
-  const [name,lat,lng,zone,note,big]=p;
+PLACES.forEach(([name,lat,lng,zone,note,big])=>{
   allLatLng.push([lat,lng]);
   const Z=ZONES[zone];
-
-  // soft zone "blob"
-  L.circle([lat,lng],{radius:1250,color:Z.fill,weight:0,fillColor:Z.fill,fillOpacity:.22})
-    .addTo(layers[zone]);
-
-  // crisp dot
-  const dot=L.circleMarker([lat,lng],{radius:5,color:'#fff',weight:2,fillColor:Z.color,fillOpacity:1})
-    .addTo(layers[zone]);
-
-  dot.bindTooltip(name,{permanent:true,direction:'right',offset:[8,0],
-    className:'lbl'+(big?' big':''), opacity:1});
-
-  dot.bindPopup(
-    `<div class="pop"><b>${name}</b><br>`+
-    `<span style="font-size:11.5px;color:#555">${note}</span><br>`+
-    `<span class="tag" style="background:${Z.color}">${Z.name}</span></div>`,
-    {closeButton:true});
+  L.circle([lat,lng],{radius:1250,weight:0,fillColor:Z.fill,fillOpacity:.22}).addTo(layers[zone]);
+  const dot=L.circleMarker([lat,lng],{radius:5,color:'#fff',weight:2,fillColor:Z.color,fillOpacity:1}).addTo(layers[zone]);
+  dot.bindTooltip(name,{permanent:true,direction:'right',offset:[8,0],className:'lbl'+(big?' big':''),opacity:1});
+  dot.bindPopup(`<div class="pop"><b>${name}</b><br><span style="font-size:11.5px;color:#555">${note}</span><br>`+
+    `<span class="tag" style="background:${Z.color}">${Z.name}</span></div>`);
 });
-
-// ---- Legend build ----
-const legend=document.getElementById('legend');
-Object.entries(ZONES).forEach(([key,Z])=>{
-  const el=document.createElement('div');
-  el.className='zone'; el.dataset.zone=key;
-  el.innerHTML=`<span class="sw" style="background:${Z.fill}"></span>
-    <div><h3>${Z.name}</h3><p>${Z.desc}</p><span class="who">${Z.who}</span></div>`;
-  el.addEventListener('click',()=>toggleZone(key,el));
-  legend.appendChild(el);
-});
+const bounds=L.latLngBounds(allLatLng).pad(.08);
+setTimeout(()=>{map.invalidateSize();map.fitBounds(bounds);},60);
+window.addEventListener('resize',()=>map.invalidateSize());
 
 let solo=null;
-function toggleZone(key,el){
-  if(solo===key){ // restore all
-    solo=null;
-    Object.keys(layers).forEach(z=>{layers[z].addTo(map);
-      document.querySelector(`.zone[data-zone="${z}"]`).classList.remove('off');});
-  }else{
-    solo=key;
-    Object.keys(layers).forEach(z=>{
-      const on = z===key;
-      if(on) layers[z].addTo(map); else map.removeLayer(layers[z]);
-      document.querySelector(`.zone[data-zone="${z}"]`).classList.toggle('off',!on);
-    });
-  }
+function applySolo(){
+  ORDER.forEach(z=>{
+    const on=!solo||z===solo;
+    if(on) layers[z].addTo(map); else map.removeLayer(layers[z]);
+    document.querySelectorAll(`[data-zone="${z}"]`).forEach(el=>el.classList.toggle('off',!on));
+  });
 }
+function setZone(key){ solo=(solo===key)?null:key; applySolo(); }
+function reset(){ solo=null; applySolo(); map.fitBounds(bounds); }
 
-const bounds=L.latLngBounds(allLatLng).pad(.08);
-map.fitBounds(bounds);
-document.getElementById('fit').onclick=()=>{ 
-  if(solo){ // clear solo first
-    solo=null;Object.keys(layers).forEach(z=>{layers[z].addTo(map);
-      document.querySelector(`.zone[data-zone="${z}"]`).classList.remove('off');});
-  }
-  map.fitBounds(bounds);
-};
+const hk=document.getElementById('heroKeys');
+ORDER.forEach(z=>{const Z=ZONES[z];
+  const b=document.createElement('button');
+  b.innerHTML=`<span class="d" style="background:${Z.fill}"></span>${Z.name}`;
+  b.onclick=()=>{document.getElementById('map').scrollIntoView();setZone(z);};
+  hk.appendChild(b);
+});
 
-// mobile collapse
-const panel=document.getElementById('panel');
-function isMobile(){return window.matchMedia('(max-width:720px)').matches;}
-if(isMobile()) panel.classList.add('collapsed');
-document.getElementById('phead').addEventListener('click',()=>{
-  if(isMobile()){
-    panel.classList.toggle('collapsed');
-    document.getElementById('ptoggle').textContent=panel.classList.contains('collapsed')?'Show':'Hide';
-  }
+const ml=document.getElementById('mapLegend');
+ORDER.forEach(z=>{const Z=ZONES[z];
+  const c=document.createElement('div');
+  c.className='chip'; c.dataset.zone=z;
+  c.innerHTML=`<span class="d" style="background:${Z.fill}"></span>${Z.name.split(' / ')[0]}`;
+  c.onclick=()=>setZone(z);
+  ml.appendChild(c);
+});
+const r=document.createElement('div'); r.className='chip reset'; r.textContent='Reset'; r.onclick=reset; ml.appendChild(r);
+
+const cardsEl=document.getElementById('cards');
+ORDER.forEach((z,i)=>{const Z=ZONES[z];
+  const hoods=PLACES.filter(p=>p[3]===z).map(p=>p[0]).join(', ');
+  const card=document.createElement('div');
+  card.className='card'; card.dataset.zone=z;
+  card.innerHTML=`<div class="bar" style="background:${Z.fill}"></div>
+    <div class="in">
+      <h3><span class="n" style="background:${Z.color}">${i+1}</span>${Z.name}</h3>
+      <p>${Z.desc}</p>
+      <span class="who">${Z.who}</span>
+      <div class="hoods"><b>Areas:</b> ${hoods}</div>
+    </div>`;
+  card.onclick=()=>{document.getElementById('map').scrollIntoView();setZone(z);};
+  cardsEl.appendChild(card);
+});
+
+const tipsEl=document.getElementById('tips');
+TIPS.forEach(([z,h,txt])=>{const Z=ZONES[z];
+  const t=document.createElement('div'); t.className='tip';
+  t.innerHTML=`<p class="h"><span class="d" style="background:${Z.fill}"></span>${h}</p><p>${txt}</p>`;
+  tipsEl.appendChild(t);
 });
 </script>
 </body>
